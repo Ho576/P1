@@ -1,0 +1,30 @@
+*{
+    margin: 0%;
+    padding: 0;
+}
+.item{
+    text-decoration: none;
+}
+.BG {
+    background-image: url(https://wallpapers.com/images/high/pastel-gradient-background-3840-x-2160-yyj5vp6chp9is7en.webp);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+  
+}
+.myItem p {
+    color: #000;
+    background-color: aquamarine;
+    color:rgb(95, 29, 29);
+    font-size: 50px;
+    border-radius: 20% ;
+    font-style: oblique;
+    
+   
+}
+
