@@ -1,43 +1,69 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState,useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import './myIndex.css';
-import Loader from '../Loader';
+import { validationUserData } from '../validation/uservalidation';
+import Input from './../../shared/Input.jsx';
+import Loader from '../Loader.jsx';
+import { useParams } from 'react-router-dom';
+export default function Edit() {
+ const navigate = useNavigate();
+ let [loader,setLoader]= useState(false);
+ let [errors,setErrors]= useState({
+  name:'',
+  email:'',
+  password:'',
+ })
+ let [user,setUser]=useState({
+    name:'',
+  email:'',
+  password:'',
 
+ });
+ const {id} = useParams('id')
+ const getUser = async ()=>{
+    const {data}= await axios.get(`https://crud-users-gold.vercel.app/users/${id}`)
+    setUser(data.user);
+ }
+ useEffect(()=>{
+    getUser();
+ },[])
+  
+  let [errorBack,setErrorBack] = useState('')
+  const handelData = (e)=>{
+    const {name,value}= e.target;
+    setUser({...user,[name]:value});
+    //setErrors({})
+  }
+  const sendData = async (e)=>{
+    e.preventDefault();
+    setLoader(true);
+   if(Object.keys(validationUserData(user)).length > 0){
+    setErrors(validationUserData(user))
+    setLoader(false);
+   }else{
+    try{
 
-export default function index() {
-    let [loader,setLoader]= useState(false);
-    const [users,setUsers]=useState([]);
-
-    const getUsers = async ()=>{
-        const response = await fetch ("https://crud-users-gold.vercel.app/users");
-        const data = await response.json();
-        setUsers(data.users);
-        setLoader(false);
+    const {data}=await axios.put(`https://crud-users-gold.vercel.app/users/${id}`,user)
+    console.log(data);
+    if(data.message=='success'){
+      toast.success("user added successfully")
+      navigate('/user/index');
+      setLoader(false);
+    }}catch(error){
+      setErrorBack(error.response.data.message);
+      setErrors([]);
+      setLoader(false);
     }
+  }
+  }
 
-    const deleteUser = async(id)=>{
-      setLoader(true);
-      const {data} = await axios.delete(`https://crud-users-gold.vercel.app/users/${id}`);
-      if(data.message =='success'){
-        toast.success("User deleted successfully")
-        setLoader(false);
-        getUsers();
-      }
-    }
 
-    useEffect ( ()=>{
-      setLoader(true);
-        getUsers();
-
-    },[])
-   
-    if (loader){
-      return (
-        <Loader/>
-      )
-    }
+   if(loader){
+    return (
+      <Loader/>
+    )
+   }
 
   return (
     <div className="container-fluid">
@@ -123,33 +149,18 @@ export default function index() {
         </div>
       </div>
       <div className="col py-3">
-        <table className='table'>
-            <thead>
-                <th scope="col">#</th>
-                <th scope="col">name</th>
-                <th scope="col">email</th>
-                <th scope="col">password</th>
-                <th >action</th>
-            </thead>
-            <tbody>
-                {users.map((user,index)=>{
-                    return (
-                        <React.Fragment key={user._id}>
-                            <tr>
-                                <td>{index}</td>
-                                <td>{user.name}</td>
-                                <td>{user.email}</td>
-                                <td>{user.password}</td>
-                                <td className='btn btn-danger' onClick={()=>deleteUser(user._id)}>delete</td>
-                                <td className='btn btn-info '><Link to ={`/user/${user._id}`} className='linkInTable'>details</Link></td>
-                                <td className='btn btn-warning '><Link to ={`/user/edit/${user._id}`} className='linkInTable'>Edit</Link></td>
-                            </tr>
-                        </React.Fragment>
-                    )
-                })}
-            </tbody>
-
-        </table>
+        {errorBack && <p className='text text-danger'>{errorBack}</p>}
+        <form onSubmit={sendData}>
+          
+        <Input errors={errors} id={'username'} title={'user name'} type={'text'} name={'name'} handelData={handelData} value={user.name}/>
+        <Input errors={errors} id={'email'} title={'user email'} type={'email'} name={'email'} handelData={handelData} value={user.email}/>
+        <Input errors={errors} id={'password'} title={'user password'} type={'password'} name={'password'} handelData={handelData} value={user.password}/>
+        
+       
+        <div className="mb-3">
+            <input type='submit' className='form-control' value='Update User' />
+        </div>
+        </form>
       </div>
     </div>
   </div>

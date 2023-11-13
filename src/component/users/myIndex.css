@@ -1,3 +1,4 @@
-.myDelete {
-    cursor: pointer;
+.linkInTable {
+    text-decoration: none;
+    color:black;
 }
