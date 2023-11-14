@@ -47,7 +47,7 @@ export default function Edit() {
     const {data}=await axios.put(`https://crud-users-gold.vercel.app/users/${id}`,user)
     console.log(data);
     if(data.message=='success'){
-      toast.success("user added successfully")
+      toast.success("user updated successfully")
       navigate('/user/index');
       setLoader(false);
     }}catch(error){
