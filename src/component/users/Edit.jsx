@@ -35,6 +35,12 @@ export default function Edit() {
     setUser({...user,[name]:value});
     //setErrors({})
   }
+
+  const inputConfigs = [
+    { id: 'username', title: 'User Name', type: 'text', name: 'name', value: user.name },
+    { id: 'email', title: 'User Email', type: 'email', name: 'email', value: user.email },
+    { id: 'password', title: 'User Password', type: 'password', name: 'password', value: user.password }
+  ];
   const sendData = async (e)=>{
     e.preventDefault();
     setLoader(true);
@@ -152,11 +158,9 @@ export default function Edit() {
         {errorBack && <p className='text text-danger'>{errorBack}</p>}
         <form onSubmit={sendData}>
           
-        <Input errors={errors} id={'username'} title={'user name'} type={'text'} name={'name'} handelData={handelData} value={user.name}/>
-        <Input errors={errors} id={'email'} title={'user email'} type={'email'} name={'email'} handelData={handelData} value={user.email}/>
-        <Input errors={errors} id={'password'} title={'user password'} type={'password'} name={'password'} handelData={handelData} value={user.password}/>
-        
-       
+        {inputConfigs.map((config) => (
+        <Input key={config.id} {...config} errors={errors} handelData={handelData} />
+      ))}
         <div className="mb-3">
             <input type='submit' className='form-control' value='Update User' />
         </div>
